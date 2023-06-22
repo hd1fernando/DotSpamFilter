@@ -22,6 +22,8 @@ foreach (var line in lines)
 
     Console.WriteLine(flag + " " + message);
 
+    
+
     maxLine--;
     if (maxLine <= 0)
         break;
@@ -29,6 +31,52 @@ foreach (var line in lines)
 
 void AddWordsToDictionaries(string message, string flag)
 {
+    flag = flag.ToLower().Trim();
+    if (flag == "spam")
+    {
+        var splitedWords = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        foreach (var word in splitedWords)
+        {
+            totalSpanWords++;
+            if (NormalWords.ContainsKey(word) == false)
+            {
+                totalNormalWords++;
+                NormalWords.Add(word, new WordInfo { Quantity = 1 });
+            }
+
+            if (SpamlWords.ContainsKey(word))
+            {
+                SpamlWords[word].Quantity += 1;
+            }
+            else
+            {
+                SpamlWords.Add(word, new WordInfo { Quantity = 1 });
+            }
+        }
+    }
+
+    if (flag == "ham")
+    {
+        var splitedWords = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        foreach (var word in splitedWords)
+        {
+            totalNormalWords++;
+            if (SpamlWords.ContainsKey(word) == false)
+            {
+                totalSpanWords++;
+                SpamlWords.Add(word, new WordInfo { Quantity = 1 });
+            }
+
+            if (NormalWords.ContainsKey(word))
+            {
+                NormalWords[word].Quantity += 1;
+            }
+            else
+            {
+                NormalWords.Add(word, new WordInfo { Quantity = 1 });
+            }
+        }
+    }
 }
 
 string RemoveStopWords(string message)

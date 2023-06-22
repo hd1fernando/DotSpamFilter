@@ -10,26 +10,94 @@ var lines = File.ReadAllLines(csvPath);
 int maxLine = (int)Math.Floor(lines.Length * 0.75);
 int validationLineAfter = maxLine + 1;
 
-foreach (var line in lines)
+TraningModel(lines, maxLine);
+
+ValidateModel(lines, validationLineAfter);
+
+void ValidateModel(string[] lines, int validationLineAfter)
 {
-    var splitedLine = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
-    var flag = splitedLine[0];
-    var message = splitedLine[1].ToLower();
+    Console.WriteLine();
+    for (int i = validationLineAfter; i < lines.Length; i++)
+    {
+        var splitedLine = lines[i].Split('|', StringSplitOptions.RemoveEmptyEntries);
+        var flag = splitedLine[0];
+        var message = splitedLine[1].ToLower();
 
-    message = RemovePonctuations(message);
-    message = RemoveStopWords(message);
-    AddWordsToDictionaries(message, flag);
+        message = RemovePonctuations(message);
+        message = RemoveStopWords(message);
 
-    Console.WriteLine(flag + " " + message);
+        if (string.IsNullOrEmpty(message))
+            continue;
 
+        var words = message.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var position = 0;
+        var firstWord = words[position];
 
+        while (NormalWords.ContainsKey(firstWord) == false && position < words.Length)
+            firstWord = words[position++];
 
-    maxLine--;
-    if (maxLine <= 0)
-        break;
+        if (position == words.Length)
+            continue;
+
+        var countOfFirstWordInNormal = (double)NormalWords[firstWord].Quantity;
+        var countOfFirstWordInSpam = (double)SpamlWords[firstWord].Quantity;
+
+        double probabilitieOfFirstWordBeNormal = countOfFirstWordInNormal / (countOfFirstWordInNormal + countOfFirstWordInSpam);
+
+        double probToBeNormal = probabilitieOfFirstWordBeNormal;
+
+        foreach (var word in words)
+        {
+            if (NormalWords.TryGetValue(word, out var value))
+                probToBeNormal *= value.Probability;
+        }
+
+        double probabilitieOfFirstWordBeSpam = countOfFirstWordInSpam / (countOfFirstWordInSpam + countOfFirstWordInNormal);
+
+        double probToBeSpam = probabilitieOfFirstWordBeSpam;
+        foreach (var word in words)
+        {
+            if (SpamlWords.TryGetValue(word, out var value))
+                probToBeSpam *= value.Probability;
+        }
+
+        string result = string.Empty;
+        if (probToBeNormal > probToBeSpam)
+        {
+            result = "ham";
+        }
+        else
+        {
+            result = "spam";
+        }
+
+        Console.WriteLine($"Expected: {flag} -> Result: {result}");
+    }
 }
 
-CalculateProbabilites();
+void TraningModel(string[] lines, int maxLine)
+{
+    foreach (var line in lines)
+    {
+        var splitedLine = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
+        var flag = splitedLine[0];
+        var message = splitedLine[1].ToLower();
+
+        message = RemovePonctuations(message);
+        message = RemoveStopWords(message);
+        AddWordsToDictionaries(message, flag);
+
+        Console.WriteLine(flag + " " + message);
+
+
+
+        maxLine--;
+        if (maxLine <= 0)
+            break;
+    }
+
+    CalculateProbabilites();
+}
 
 void CalculateProbabilites()
 {

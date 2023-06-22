@@ -16,6 +16,8 @@ ValidateModel(lines, validationLineAfter);
 
 void ValidateModel(string[] lines, int validationLineAfter)
 {
+    int corretAnswers = 0;
+    int wrongAnswers = 0;
     Console.WriteLine();
     for (int i = validationLineAfter; i < lines.Length; i++)
     {
@@ -72,7 +74,16 @@ void ValidateModel(string[] lines, int validationLineAfter)
         }
 
         Console.WriteLine($"Expected: {flag} -> Result: {result}");
+
+        if (flag.Trim() == result)
+            corretAnswers++;
+        else
+            wrongAnswers++;
     }
+
+    Console.WriteLine($"Success: {corretAnswers}");
+    Console.WriteLine($"Error: {wrongAnswers}");
+    Console.WriteLine($"Sucess rate: {((double)corretAnswers / (double)(corretAnswers + wrongAnswers)) * 100} %");
 }
 
 void TraningModel(string[] lines, int maxLine)

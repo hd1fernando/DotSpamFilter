@@ -1,4 +1,6 @@
-﻿var NormalWords = new Dictionary<string, WordInfo>();
+﻿// TODO: try to use https://spamassassin.apache.org/old/publiccorpus/ , https://www.baeldung.com/cs/spam-filter-training-sets
+
+var NormalWords = new Dictionary<string, WordInfo>();
 var SpamlWords = new Dictionary<string, WordInfo>();
 
 int totalSpanWords = 0;
@@ -7,7 +9,8 @@ int totalNormalWords = 0;
 var csvPath = "spam.csv";
 
 var lines = File.ReadAllLines(csvPath);
-int maxLine = (int)Math.Floor(lines.Length * 0.75);
+var percentageOfTrainigData = 0.35;
+int maxLine = (int)Math.Floor((double)lines.Length * percentageOfTrainigData);
 int validationLineAfter = maxLine + 1;
 
 TraningModel(lines, maxLine);

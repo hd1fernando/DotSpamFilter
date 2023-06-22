@@ -5,11 +5,6 @@ VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotSpamFilter", "src\DotSpamFilter.csproj", "{9AF1CE78-44FF-4269-AA0B-B1FF2FD00D89}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{7D40618D-2B10-4731-BBA6-93B1BF9557FB}"
-	ProjectSection(SolutionItems) = preProject
-		data\spam.csv = data\spam.csv
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

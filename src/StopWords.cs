@@ -1,11 +1,4 @@
-﻿
-
-
-
-
-
-
-
+﻿// From https://www.ranks.nl/stopwords
 public static class StopWords
 {
     public static string[] ENG = new string[]

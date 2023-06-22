@@ -14,7 +14,7 @@ foreach (var line in lines)
 {
     var splitedLine = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
     var flag = splitedLine[0];
-    var message = splitedLine[1];
+    var message = splitedLine[1].ToLower();
 
     message = RemovePonctuations(message);
     message = RemoveStopWords(message);
@@ -22,11 +22,29 @@ foreach (var line in lines)
 
     Console.WriteLine(flag + " " + message);
 
-    
+
 
     maxLine--;
     if (maxLine <= 0)
         break;
+}
+
+CalculateProbabilites();
+
+void CalculateProbabilites()
+{
+    Console.WriteLine("Calculating probabilities");
+    foreach (var spamWord in SpamlWords)
+    {
+        Console.Write(".");
+        spamWord.Value.Probability = (double)spamWord.Value.Quantity / (double)totalNormalWords;
+    }
+
+    foreach (var normalWord in NormalWords)
+    {
+        Console.Write(".");
+        normalWord.Value.Probability = (double)normalWord.Value.Quantity / (double)totalNormalWords;
+    }
 }
 
 void AddWordsToDictionaries(string message, string flag)

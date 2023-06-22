@@ -29,18 +29,18 @@ foreach (var line in lines)
 
 void AddWordsToDictionaries(string message, string flag)
 {
-    throw new NotImplementedException();
 }
 
 string RemoveStopWords(string message)
 {
-    throw new NotImplementedException();
+    var splitedWords = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+    var nonStopWords = splitedWords.Except(StopWords.ENG).ToArray();
+    return string.Join(" ", nonStopWords);
 }
 
 string RemovePonctuations(string message)
 {
-    throw new NotImplementedException();
-
+    return new string(message.Where(_ => char.IsPunctuation(_) == false).ToArray());
 }
 
 public class WordInfo

@@ -9,18 +9,24 @@ int totalNormalWords = 0;
 var csvPath = "spam.csv";
 
 var lines = File.ReadAllLines(csvPath);
-var percentageOfTrainigData = 0.35;
+var percentageOfTrainigData = 0.75;
 int maxLine = (int)Math.Floor((double)lines.Length * percentageOfTrainigData);
 int validationLineAfter = maxLine + 1;
 
-TraningModel(lines, maxLine);
+EntryPoint(lines, maxLine, validationLineAfter);
 
-ValidateModel(lines, validationLineAfter);
+void EntryPoint(string[] lines, int maxLine, int validationLineAfter)
+{
+    TraningModel(lines, maxLine);
+    ValidateModel(lines, validationLineAfter);
+}
 
 void ValidateModel(string[] lines, int validationLineAfter)
 {
     int corretAnswers = 0;
     int wrongAnswers = 0;
+    int spanDetectedAsNormal = 0;
+
     Console.WriteLine();
     for (int i = validationLineAfter; i < lines.Length; i++)
     {
@@ -82,11 +88,15 @@ void ValidateModel(string[] lines, int validationLineAfter)
             corretAnswers++;
         else
             wrongAnswers++;
+
+        if (flag.Trim() == "spam" && result == "ham")
+            spanDetectedAsNormal++;
     }
 
     Console.WriteLine($"Success: {corretAnswers}");
     Console.WriteLine($"Error: {wrongAnswers}");
     Console.WriteLine($"Sucess rate: {((double)corretAnswers / (double)(corretAnswers + wrongAnswers)) * 100} %");
+    Console.WriteLine($"Span Detected As Normal: {spanDetectedAsNormal}");
 }
 
 void TraningModel(string[] lines, int maxLine)
@@ -189,10 +199,4 @@ string RemoveStopWords(string message)
 string RemovePonctuations(string message)
 {
     return new string(message.Where(_ => char.IsPunctuation(_) == false).ToArray());
-}
-
-public class WordInfo
-{
-    public required int Quantity { get; set; }
-    public double Probability { get; set; }
 }
